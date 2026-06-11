@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>Extrato Financeiro - Controle Financeiro com Gráficos</title>
     <!-- Biblioteca para gerar PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -12,6 +12,7 @@
         * {
             box-sizing: border-box;
             font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         /* Variáveis de tema - Modo claro */
@@ -53,7 +54,7 @@
         body {
             background: var(--bg-primary);
             margin: 0;
-            padding: 20px;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -74,13 +75,14 @@
             align-items: center;
             z-index: 1000;
             backdrop-filter: blur(8px);
+            padding: 16px;
         }
 
         .login-box {
             background: var(--bg-secondary);
             border-radius: 32px;
-            padding: 40px;
-            width: 90%;
+            padding: 32px 24px;
+            width: 100%;
             max-width: 420px;
             box-shadow: 0 20px 60px var(--shadow-color);
             border: 1px solid var(--border-color);
@@ -89,24 +91,28 @@
         .login-box h2 {
             margin: 0 0 8px 0;
             color: var(--text-primary);
+            font-size: 1.8rem;
+            text-align: center;
         }
 
         .login-box .sub {
             margin-bottom: 24px;
             color: var(--text-secondary);
             font-size: 0.9rem;
+            text-align: center;
         }
 
         .login-input {
             width: 100%;
-            padding: 12px 16px;
+            padding: 14px 16px;
             margin-bottom: 16px;
             border: 2px solid var(--border-color);
             border-radius: 16px;
-            font-size: 1rem;
+            font-size: 16px;
             transition: all 0.2s;
             background: var(--input-bg);
             color: var(--text-primary);
+            -webkit-appearance: none;
         }
 
         .login-input:focus {
@@ -124,7 +130,7 @@
             background: #10b981;
             color: white;
             border: none;
-            padding: 12px;
+            padding: 14px;
             border-radius: 16px;
             font-size: 1rem;
             font-weight: 600;
@@ -156,33 +162,53 @@
             text-align: center;
         }
 
-        /* Container Principal */
+        /* Container Principal - Responsivo Mobile */
         .container {
-            max-width: 1600px;
+            max-width: 100%;
             width: 100%;
             background: var(--bg-secondary);
-            border-radius: 24px;
             box-shadow: 0 8px 30px var(--shadow-color);
-            overflow: hidden;
-            padding: 20px 24px 32px;
+            overflow-x: hidden;
+            padding: 16px;
             transition: all 0.2s;
             border: 1px solid var(--border-color);
+            min-height: 100vh;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                max-width: 1600px;
+                margin: 20px;
+                border-radius: 24px;
+                min-height: auto;
+            }
+            
+            body {
+                padding: 20px;
+            }
         }
 
         .header-user {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            gap: 12px;
             margin-bottom: 20px;
             padding-bottom: 16px;
             border-bottom: 2px solid var(--border-color);
-            flex-wrap: wrap;
-            gap: 12px;
+        }
+
+        @media (min-width: 480px) {
+            .header-user {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
         }
 
         .user-info {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 12px;
             background: var(--bg-primary);
             padding: 8px 16px;
@@ -192,6 +218,7 @@
         .user-info span {
             font-weight: 600;
             color: var(--text-primary);
+            font-size: 0.9rem;
         }
 
         .logout-btn {
@@ -216,25 +243,55 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        @media (min-width: 480px) {
+            .theme-toggle {
+                width: auto;
+            }
         }
 
         .theme-toggle:hover {
             background: var(--border-color);
         }
 
+        .header-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        @media (min-width: 480px) {
+            .header-controls {
+                flex-direction: row;
+                align-items: center;
+            }
+        }
+
         h1 {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 600;
             margin: 0;
             color: var(--text-primary);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         h1::before {
             content: "💰";
-            font-size: 1.8rem;
+            font-size: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            h1::before {
+                font-size: 1.8rem;
+            }
         }
 
         .sub {
@@ -243,23 +300,35 @@
             padding-left: 14px;
             margin: 8px 0 0 0;
             font-weight: 500;
+            font-size: 0.85rem;
         }
 
-        /* Cards resumo */
+        @media (min-width: 768px) {
+            .sub {
+                font-size: 1rem;
+            }
+        }
+
+        /* Cards resumo - Mobile first */
         .resumo {
-            display: flex;
-            gap: 18px;
-            flex-wrap: wrap;
-            margin-bottom: 28px;
-            margin-top: 20px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+            margin-top: 16px;
+        }
+
+        @media (min-width: 480px) {
+            .resumo {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 18px;
+            }
         }
 
         .card {
             background: var(--card-bg);
             border-radius: 20px;
-            padding: 18px 24px;
-            flex: 1;
-            min-width: 160px;
+            padding: 16px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 0 0 1px rgba(0,0,0,0.02);
             border: 1px solid var(--border-color);
         }
@@ -287,73 +356,111 @@
         }
 
         .card-label {
-            font-size: 0.85rem;
+            font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             font-weight: 600;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
-        .card-entradas .card-label, .card-saidas .card-label, .card-saldo .card-label {
-            color: rgba(255,255,255,0.9);
+        @media (min-width: 768px) {
+            .card-label {
+                font-size: 0.85rem;
+            }
         }
 
         .valor {
-            font-size: 2rem;
+            font-size: 1.3rem;
             font-weight: 800;
             color: var(--text-primary);
         }
 
-        /* Seção de gráficos */
+        @media (min-width: 768px) {
+            .valor {
+                font-size: 2rem;
+            }
+        }
+
+        /* Seção de gráficos - Mobile */
         .graficos-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-            gap: 24px;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        @media (min-width: 768px) {
+            .graficos-container {
+                grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+                gap: 24px;
+            }
         }
 
         .grafico-card {
             background: var(--card-bg);
             border-radius: 20px;
-            padding: 20px;
+            padding: 16px;
             border: 1px solid var(--border-color);
             box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
 
         .grafico-card h3 {
-            margin: 0 0 16px 0;
+            margin: 0 0 12px 0;
             color: var(--text-primary);
-            font-size: 1.1rem;
+            font-size: 1rem;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
+        @media (min-width: 768px) {
+            .grafico-card h3 {
+                font-size: 1.1rem;
+                margin-bottom: 16px;
+            }
+        }
+
         canvas {
-            max-height: 300px;
+            max-height: 250px;
             width: 100%;
         }
 
-        /* Abas */
+        @media (min-width: 768px) {
+            canvas {
+                max-height: 300px;
+            }
+        }
+
+        /* Abas - Mobile */
         .tabs {
             display: flex;
-            gap: 8px;
-            margin-bottom: 24px;
+            gap: 4px;
+            margin-bottom: 16px;
             border-bottom: 2px solid var(--border-color);
             padding-bottom: 0;
             flex-wrap: wrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .tab-btn {
             background: none;
             border: none;
-            padding: 12px 24px;
-            font-size: 1rem;
+            padding: 10px 16px;
+            font-size: 0.8rem;
             font-weight: 600;
             color: var(--text-secondary);
             cursor: pointer;
             transition: all 0.2s;
             border-radius: 12px 12px 0 0;
             position: relative;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 480px) {
+            .tab-btn {
+                padding: 12px 24px;
+                font-size: 1rem;
+            }
         }
 
         .tab-btn:hover {
@@ -384,12 +491,12 @@
             display: block;
         }
 
-        /* Formulário Unificado */
+        /* Formulário - Mobile */
         .form-panel {
             background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
             border-radius: 20px;
-            padding: 24px;
-            margin-bottom: 28px;
+            padding: 16px;
+            margin-bottom: 20px;
             border: 2px solid #10b981;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
@@ -399,10 +506,17 @@
             border: 2px solid #10b981;
         }
 
+        @media (min-width: 768px) {
+            .form-panel {
+                padding: 24px;
+                margin-bottom: 28px;
+            }
+        }
+
         .form-title {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 700;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             color: #065f46;
             display: flex;
             align-items: center;
@@ -415,23 +529,31 @@
 
         .form-row {
             display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-            margin-bottom: 16px;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        @media (min-width: 480px) {
+            .form-row {
+                flex-direction: row;
+                gap: 16px;
+                margin-bottom: 16px;
+            }
         }
 
         .input-group {
             flex: 1;
-            min-width: 140px;
+            min-width: 0;
         }
 
         .input-group label {
             display: block;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 700;
             text-transform: uppercase;
             color: #065f46;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             letter-spacing: 0.5px;
         }
 
@@ -453,9 +575,9 @@
             background: #10b981;
             color: white;
             border: none;
-            padding: 10px 16px;
+            padding: 10px 14px;
             border-radius: 14px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
             cursor: pointer;
             white-space: nowrap;
@@ -464,7 +586,6 @@
 
         .btn-add-categoria:hover {
             background: #059669;
-            transform: translateY(-1px);
         }
 
         input, select, textarea {
@@ -472,10 +593,11 @@
             padding: 10px 12px;
             border-radius: 14px;
             border: 1px solid var(--border-color);
-            font-size: 0.9rem;
+            font-size: 14px;
             background: var(--input-bg);
             color: var(--text-primary);
             transition: 0.2s;
+            -webkit-appearance: none;
         }
 
         input:focus, select:focus, textarea:focus {
@@ -486,22 +608,30 @@
 
         .tipo-selector {
             display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
-            padding: 8px;
+            gap: 8px;
+            margin-bottom: 16px;
+            padding: 6px;
             background: var(--bg-secondary);
             border-radius: 16px;
         }
 
         .tipo-option {
             flex: 1;
-            padding: 12px;
+            padding: 10px;
             text-align: center;
             border-radius: 12px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.2s;
             border: 2px solid var(--border-color);
+            font-size: 0.8rem;
+        }
+
+        @media (min-width: 480px) {
+            .tipo-option {
+                padding: 12px;
+                font-size: 1rem;
+            }
         }
 
         .tipo-option.entrada {
@@ -528,7 +658,6 @@
 
         .tipo-option.active {
             border-color: currentColor;
-            transform: scale(1.02);
         }
 
         .tipo-option.entrada.active {
@@ -545,7 +674,7 @@
             background: #0f172a;
             color: white;
             border: none;
-            padding: 12px 28px;
+            padding: 12px 20px;
             border-radius: 40px;
             font-weight: bold;
             font-size: 0.9rem;
@@ -558,40 +687,50 @@
             background: #10b981;
         }
 
-        .btn-add:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-
-        /* Toolbar */
+        /* Toolbar - Mobile */
         .toolbar {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 24px;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        @media (min-width: 480px) {
+            .toolbar {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 24px;
+            }
         }
 
         .btn-group {
             display: flex;
-            gap: 12px;
             flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
         }
 
         button {
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
-            padding: 8px 16px;
+            padding: 8px 14px;
             border-radius: 40px;
             font-weight: 600;
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             cursor: pointer;
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             color: var(--text-primary);
+        }
+
+        @media (min-width: 480px) {
+            button {
+                padding: 8px 16px;
+                font-size: 0.85rem;
+            }
         }
 
         button:hover {
@@ -599,52 +738,42 @@
             border-color: var(--text-secondary);
         }
 
-        .btn-danger {
-            color: #ef4444;
-            border-color: #7f1d1d;
-        }
-
-        .btn-danger:hover {
-            background: #450a0a;
-        }
-
-        .btn-backup {
-            color: #60a5fa;
-            border-color: #1e3a8a;
-        }
-
-        .btn-backup:hover {
-            background: #172554;
-        }
-
-        .btn-pdf {
-            color: #ef4444;
-            border-color: #7f1d1d;
-        }
-
-        .btn-pdf:hover {
-            background: #450a0a;
-        }
-
-        /* Tabela */
+        /* Tabela - Mobile com rolagem */
         .table-wrapper {
             overflow-x: auto;
             border-radius: 20px;
             border: 1px solid var(--border-color);
             background: var(--bg-secondary);
             margin-top: 8px;
+            -webkit-overflow-scrolling: touch;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.9rem;
-            min-width: 650px;
+            font-size: 0.75rem;
+            min-width: 500px;
+        }
+
+        @media (min-width: 480px) {
+            table {
+                font-size: 0.85rem;
+                min-width: 650px;
+            }
+        }
+
+        th, td {
+            padding: 10px 8px;
+        }
+
+        @media (min-width: 480px) {
+            th, td {
+                padding: 14px 12px;
+            }
         }
 
         th {
             text-align: left;
-            padding: 14px 12px;
             background-color: var(--table-header-bg);
             font-weight: 600;
             color: var(--text-primary);
@@ -652,7 +781,6 @@
         }
 
         td {
-            padding: 14px 12px;
             border-bottom: 1px solid var(--border-color);
             vertical-align: middle;
             color: var(--text-primary);
@@ -674,10 +802,17 @@
 
         .tipo-badge {
             display: inline-block;
-            padding: 4px 10px;
+            padding: 3px 8px;
             border-radius: 20px;
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             font-weight: 600;
+        }
+
+        @media (min-width: 480px) {
+            .tipo-badge {
+                padding: 4px 10px;
+                font-size: 0.7rem;
+            }
         }
 
         .tipo-entrada {
@@ -693,12 +828,19 @@
         .acoes button {
             background: none;
             border: none;
-            font-size: 1.2rem;
-            padding: 4px 8px;
+            font-size: 1rem;
+            padding: 4px;
             margin: 0 2px;
             cursor: pointer;
             border-radius: 30px;
             color: var(--text-primary);
+        }
+
+        @media (min-width: 480px) {
+            .acoes button {
+                font-size: 1.2rem;
+                padding: 4px 8px;
+            }
         }
 
         .acoes button:hover {
@@ -708,37 +850,52 @@
         .empty-row td {
             text-align: center;
             color: var(--text-muted);
-            padding: 40px;
+            padding: 30px;
             font-style: italic;
         }
 
         footer {
-            margin-top: 24px;
-            font-size: 0.75rem;
+            margin-top: 20px;
+            font-size: 0.65rem;
             text-align: center;
             color: var(--text-muted);
-            padding-top: 16px;
+            padding-top: 12px;
             border-top: 1px solid var(--border-color);
+        }
+
+        @media (min-width: 768px) {
+            footer {
+                margin-top: 24px;
+                font-size: 0.75rem;
+                padding-top: 16px;
+            }
         }
 
         .filtros {
             display: flex;
-            gap: 12px;
+            flex-direction: column;
+            gap: 8px;
             margin-bottom: 16px;
-            flex-wrap: wrap;
+        }
+
+        @media (min-width: 480px) {
+            .filtros {
+                flex-direction: row;
+                gap: 12px;
+            }
         }
 
         .filtro-select {
-            padding: 6px 12px;
+            padding: 8px 12px;
             border-radius: 20px;
             border: 1px solid var(--border-color);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             background: var(--input-bg);
             color: var(--text-primary);
             cursor: pointer;
         }
 
-        /* Modal */
+        /* Modal - Mobile */
         .modal {
             display: none;
             position: fixed;
@@ -750,6 +907,7 @@
             z-index: 1001;
             justify-content: center;
             align-items: center;
+            padding: 16px;
         }
 
         .modal.active {
@@ -759,17 +917,24 @@
         .modal-content {
             background: var(--bg-secondary);
             border-radius: 24px;
-            padding: 32px;
+            padding: 20px;
             max-width: 550px;
-            width: 90%;
+            width: 100%;
             max-height: 90vh;
             overflow-y: auto;
             border: 1px solid var(--border-color);
         }
 
+        @media (min-width: 480px) {
+            .modal-content {
+                padding: 32px;
+            }
+        }
+
         .modal-content h3 {
             margin: 0 0 8px 0;
             color: var(--text-primary);
+            font-size: 1.2rem;
         }
 
         .modal-content .sub {
@@ -779,7 +944,7 @@
         }
 
         .checkbox-group {
-            margin: 15px 0;
+            margin: 12px 0;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -789,6 +954,7 @@
             cursor: pointer;
             font-weight: normal;
             color: var(--text-primary);
+            font-size: 0.85rem;
         }
 
         .checkbox-group input {
@@ -802,27 +968,34 @@
             display: flex;
             gap: 12px;
             justify-content: flex-end;
-            margin-top: 25px;
+            margin-top: 20px;
         }
 
         .separator {
             height: 1px;
             background: var(--border-color);
-            margin: 20px 0;
+            margin: 16px 0;
         }
 
         .categoria-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 12px;
-            margin-top: 16px;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        @media (min-width: 480px) {
+            .categoria-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 12px;
+            }
         }
 
         .categoria-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 15px;
+            padding: 10px 12px;
             background: var(--bg-primary);
             border-radius: 12px;
         }
@@ -830,19 +1003,22 @@
         .categoria-nome {
             font-weight: 600;
             color: var(--text-primary);
+            font-size: 0.85rem;
         }
 
         .categoria-valor.entrada {
             color: #10b981;
             font-weight: 700;
+            font-size: 0.85rem;
         }
 
         .categoria-valor.saida {
             color: #ef4444;
             font-weight: 700;
+            font-size: 0.85rem;
         }
 
-        /* Estilos para o PDF - ALTO CONTRASTE */
+        /* Estilos para o PDF - mantido */
         .pdf-report {
             padding: 30px;
             font-family: Arial, sans-serif;
@@ -866,9 +1042,11 @@
             background: #f0f0f0;
             border-radius: 10px;
             border: 1px solid #000000;
+            flex-wrap: wrap;
         }
         .pdf-report .pdf-resumo-item {
             text-align: center;
+            padding: 10px;
         }
         .pdf-report .pdf-resumo-label {
             font-size: 12px;
@@ -876,16 +1054,18 @@
             font-weight: bold;
         }
         .pdf-report .pdf-resumo-valor {
-            font-size: 22px;
+            font-size: 18px;
             font-weight: bold;
         }
         .pdf-report .pdf-categorias {
             display: flex;
+            flex-wrap: wrap;
             gap: 20px;
             margin: 30px 0;
         }
         .pdf-report .pdf-categoria-box {
             flex: 1;
+            min-width: 200px;
             border: 1px solid #000000;
             padding: 15px;
             border-radius: 8px;
@@ -911,10 +1091,11 @@
             border-collapse: collapse;
             margin-top: 20px;
             border: 2px solid #000000;
+            overflow-x: auto;
         }
         .pdf-report th, .pdf-report td {
             border: 1px solid #000000;
-            padding: 10px;
+            padding: 8px;
             text-align: left;
         }
         .pdf-report th {
@@ -924,29 +1105,6 @@
         }
         .pdf-report td {
             color: #000000;
-        }
-        .pdf-report .valor-entrada-pdf {
-            color: #059669;
-            font-weight: bold;
-        }
-        .pdf-report .valor-saida-pdf {
-            color: #dc2626;
-            font-weight: bold;
-        }
-
-        @media (max-width: 680px) {
-            body {
-                padding: 12px;
-            }
-            .container {
-                padding: 16px;
-            }
-            .graficos-container {
-                grid-template-columns: 1fr;
-            }
-            .modal-content {
-                padding: 20px;
-            }
         }
     </style>
 </head>
@@ -987,7 +1145,7 @@
 <div class="container">
     <div class="header-user">
         <h1>Extrato Financeiro</h1>
-        <div style="display: flex; gap: 12px; align-items: center;">
+        <div class="header-controls">
             <button id="themeToggle" class="theme-toggle">🌙 Modo Escuro</button>
             <div class="user-info">
                 <span>👤 <span id="currentUserName"></span></span>
@@ -1017,7 +1175,7 @@
     <div class="tabs">
         <button class="tab-btn active" data-tab="extrato">📋 EXTRATO</button>
         <button class="tab-btn" data-tab="graficos">📊 GRÁFICOS</button>
-        <button class="tab-btn" data-tab="categorias">📈 RESUMO POR CATEGORIA</button>
+        <button class="tab-btn" data-tab="categorias">📈 CATEGORIAS</button>
         <button class="tab-btn" data-tab="adicionar">➕ ADICIONAR</button>
     </div>
 
@@ -1042,7 +1200,7 @@
                         <th>Categoria</th>
                         <th>Tipo</th>
                         <th>Valor</th>
-                        <th style="width:80px">Ações</th>
+                        <th style="width:70px">Ações</th>
                     </tr>
                 </thead>
                 <tbody id="extratoBody">
@@ -1078,7 +1236,7 @@
 
     <!-- Conteúdo Resumo por Categoria -->
     <div id="categorias" class="tab-content">
-        <div class="grafico-card" style="margin-bottom: 20px;">
+        <div class="grafico-card" style="margin-bottom: 16px;">
             <h3>📥 Total por Categoria (Entradas)</h3>
             <div id="resumoEntradasCategoria" class="categoria-grid"></div>
         </div>
@@ -1126,14 +1284,14 @@
     <!-- Barra de ações -->
     <div class="toolbar">
         <div class="btn-group">
-            <button id="exportPDFBtn" class="btn-pdf">📄 PDF Completo</button>
+            <button id="exportPDFBtn" class="btn-pdf">📄 PDF</button>
             <button id="backupBtn" class="btn-backup">💾 Backup</button>
             <button id="restoreBtn" class="btn-backup">📥 Restaurar</button>
-            <button id="clearAllBtn" class="btn-danger">🗑️ Limpar tudo</button>
+            <button id="clearAllBtn" class="btn-danger">🗑️ Limpar</button>
         </div>
     </div>
 
-    <footer>✔️ Dados salvos automaticamente. Gráficos atualizados em tempo real!</footer>
+    <footer>✔️ Dados salvos automaticamente | Seus dados são seguros</footer>
 </div>
 </div>
 
@@ -1145,29 +1303,22 @@
         
         <div class="checkbox-group">
             <input type="checkbox" id="incluirResumo" checked>
-            <label>📊 Incluir Resumo Financeiro (Totais de Entradas/Saídas/Saldo)</label>
+            <label>📊 Incluir Resumo Financeiro</label>
         </div>
         
         <div class="checkbox-group">
             <input type="checkbox" id="incluirCategorias" checked>
-            <label>📈 Incluir Análise por Categoria (Entradas e Saídas detalhadas)</label>
+            <label>📈 Incluir Análise por Categoria</label>
         </div>
         
         <div class="checkbox-group">
             <input type="checkbox" id="incluirEvolucao" checked>
-            <label>📉 Incluir Evolução Diária (Movimentações por dia)</label>
+            <label>📉 Incluir Evolução Diária</label>
         </div>
         
         <div class="checkbox-group">
             <input type="checkbox" id="incluirMovimentacoes" checked>
-            <label>📋 Incluir Lista Completa de Movimentações (Todas as transações)</label>
-        </div>
-        
-        <div class="separator"></div>
-        
-        <div class="checkbox-group">
-            <input type="checkbox" id="incluirGraficosPDF">
-            <label>🎨 Incluir Gráficos (Pizza e Linha - Experimental)</label>
+            <label>📋 Incluir Lista Completa de Movimentações</label>
         </div>
         
         <div class="modal-buttons">
@@ -1239,7 +1390,6 @@
             localStorage.setItem('theme', 'dark');
             if (themeBtn) themeBtn.innerHTML = '☀️ Modo Claro';
         }
-        // Recarregar gráficos para atualizar cores
         if (currentUser) {
             atualizarGraficos();
         }
@@ -1363,7 +1513,6 @@
     }
 
     function atualizarGraficos() {
-        // Entradas por categoria
         const entradasCat = {};
         categoriasEntrada.forEach(cat => entradasCat[cat] = 0);
         transacoes.filter(t => t.tipo === 'entrada').forEach(t => entradasCat[t.categoria] += t.valor);
@@ -1373,10 +1522,9 @@
         graficoEntradasCat = new Chart(ctxEntCat, {
             type: 'pie',
             data: { labels: Object.keys(entradasCat), datasets: [{ data: Object.values(entradasCat), backgroundColor: ['#10b981', '#34d399', '#6ee7b7', '#a7f3d0', '#d1fae5', '#ecfdf5'] }] },
-            options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary') } } } }
+            options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom', labels: { color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'), font: { size: window.innerWidth < 480 ? 10 : 12 } } } } }
         });
 
-        // Saídas por categoria
         const saidasCat = {};
         categoriasSaida.forEach(cat => saidasCat[cat] = 0);
         transacoes.filter(t => t.tipo === 'saida').forEach(t => saidasCat[t.categoria] += t.valor);
@@ -1386,10 +1534,9 @@
         graficoSaidasCat = new Chart(ctxSaiCat, {
             type: 'pie',
             data: { labels: Object.keys(saidasCat), datasets: [{ data: Object.values(saidasCat), backgroundColor: ['#ef4444', '#f87171', '#fca5a5', '#fecaca', '#fee2e2', '#fef2f2', '#ffc4c4', '#ffe4e4'] }] },
-            options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary') } } } }
+            options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom', labels: { color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'), font: { size: window.innerWidth < 480 ? 10 : 12 } } } } }
         });
 
-        // Evolução diária
         const diasMap = new Map();
         transacoes.forEach(t => {
             if (!diasMap.has(t.data)) diasMap.set(t.data, { entrada: 0, saida: 0 });
@@ -1408,7 +1555,7 @@
         graficoEntradasDia = new Chart(ctxEntDia, {
             type: 'line',
             data: { labels: labelsBR, datasets: [{ label: 'Entradas', data: entradasDiarias, borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.1)', fill: true, tension: 0.4 }] },
-            options: { responsive: true, plugins: { legend: { position: 'top', labels: { color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary') } } } }
+            options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'top', labels: { color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'), font: { size: window.innerWidth < 480 ? 10 : 12 } } } } }
         });
 
         if (graficoSaidasDia) graficoSaidasDia.destroy();
@@ -1416,7 +1563,7 @@
         graficoSaidasDia = new Chart(ctxSaiDia, {
             type: 'line',
             data: { labels: labelsBR, datasets: [{ label: 'Saídas', data: saidasDiarias, borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.1)', fill: true, tension: 0.4 }] },
-            options: { responsive: true, plugins: { legend: { position: 'top', labels: { color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary') } } } }
+            options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'top', labels: { color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'), font: { size: window.innerWidth < 480 ? 10 : 12 } } } } }
         });
     }
 
@@ -1431,22 +1578,19 @@
 
         document.getElementById('resumoEntradasCategoria').innerHTML = Object.entries(entradasCat)
             .filter(([_, v]) => v > 0)
-            .map(([cat, val]) => `<div class="categoria-item"><span class="categoria-nome">${cat}</span><span class="categoria-valor entrada">${formatCurrency(val)}</span></div>`).join('') || '<div style="text-align:center">Nenhuma entrada</div>';
+            .map(([cat, val]) => `<div class="categoria-item"><span class="categoria-nome">${cat}</span><span class="categoria-valor entrada">${formatCurrency(val)}</span></div>`).join('') || '<div style="text-align:center; padding:20px;">Nenhuma entrada</div>';
         
         document.getElementById('resumoSaidasCategoria').innerHTML = Object.entries(saidasCat)
             .filter(([_, v]) => v > 0)
-            .map(([cat, val]) => `<div class="categoria-item"><span class="categoria-nome">${cat}</span><span class="categoria-valor saida">${formatCurrency(val)}</span></div>`).join('') || '<div style="text-align:center">Nenhuma saída</div>';
+            .map(([cat, val]) => `<div class="categoria-item"><span class="categoria-nome">${cat}</span><span class="categoria-valor saida">${formatCurrency(val)}</span></div>`).join('') || '<div style="text-align:center; padding:20px;">Nenhuma saída</div>';
     }
 
     function atualizarFiltroCategoria() {
         const filtroSelect = document.getElementById('filtroCategoria');
-        // Pega todas as categorias únicas das transações
         const categoriasUnicas = [...new Set(transacoes.map(t => t.categoria))];
         
-        // Mantém a opção "Todas as categorias" e adiciona as categorias existentes
         let options = '<option value="todas">📋 Todas as categorias</option>';
         options += categoriasUnicas.map(cat => `<option value="${cat}">🏷️ ${cat}</option>`).join('');
-        
         filtroSelect.innerHTML = options;
     }
 
@@ -1468,8 +1612,8 @@
         
         tbody.innerHTML = filtradas.map(t => `
             <tr data-id="${t.id}">
-                <td>${formatDateToBR(t.data)}</td>
-                <td><strong>${escapeHtml(t.descricao)}</strong></td>
+                <td style="font-size: ${window.innerWidth < 480 ? '0.7rem' : '0.9rem'}">${formatDateToBR(t.data)}</td>
+                <td><strong>${escapeHtml(t.descricao.substring(0, window.innerWidth < 480 ? 20 : 100))}${t.descricao.length > (window.innerWidth < 480 ? 20 : 100) ? '...' : ''}</strong></td>
                 <td>${escapeHtml(t.categoria)}</td>
                 <td><span class="tipo-badge ${t.tipo === 'entrada' ? 'tipo-entrada' : 'tipo-saida'}">${t.tipo === 'entrada' ? 'Entrada' : 'Saída'}</span></td>
                 <td class="${t.tipo === 'entrada' ? 'valor-entrada' : 'valor-saida'}">${t.tipo === 'entrada' ? formatCurrency(t.valor) : `- ${formatCurrency(t.valor)}`}</td>
@@ -1852,6 +1996,13 @@
             transacoes = [];
             document.getElementById('mainApp').style.display = 'none';
             document.getElementById('loginOverlay').style.display = 'flex';
+        }
+    });
+    
+    window.addEventListener('resize', () => {
+        if (currentUser) {
+            atualizarGraficos();
+            renderExtrato();
         }
     });
     
