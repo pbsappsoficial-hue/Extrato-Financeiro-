@@ -822,10 +822,31 @@
     function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
 
     function loadUsers() { return JSON.parse(localStorage.getItem("appUsersMobile") || "{}"); }
+    function loadDeletedUsers() { return JSON.parse(localStorage.getItem("deletedUsers") || "{}"); }
+    function saveDeletedUsers(deleted) { localStorage.setItem("deletedUsers", JSON.stringify(deleted)); }
     function saveUsers(users) { localStorage.setItem("appUsersMobile", JSON.stringify(users)); }
     
     function registerUser(nome, senha) {
         let users = loadUsers();
+        let deletedUsers = loadDeletedUsers();
+        
+        // Verificar se o usuário foi excluído recentemente
+        if(deletedUsers[nome]) {
+            const deletionTime = deletedUsers[nome].deletedAt;
+            const now = Date.now();
+            const sevenDaysInMs = 7 * 24 * 60 * 60 * 1000;
+            const timeLeft = sevenDaysInMs - (now - deletionTime);
+            
+            if(timeLeft > 0) {
+                const daysLeft = Math.ceil(timeLeft / (24 * 60 * 60 * 1000));
+                throw new Error(`Este nome de usuário foi excluído há menos de 7 dias. Aguarde ${daysLeft} dia(s) para criar uma nova conta com este nome.`);
+            } else {
+                // Passou dos 7 dias, pode remover do registro de excluídos
+                delete deletedUsers[nome];
+                saveDeletedUsers(deletedUsers);
+            }
+        }
+        
         if(users[nome]) throw new Error("Usuário já existe!");
         users[nome] = { senha, transacoes: [], catEntrada: categoriaEntradas, catSaida: categoriaSaidas };
         saveUsers(users);
@@ -851,12 +872,20 @@
         }
     }
 
-    // Função para excluir a conta permanentemente com verificação de senha
     function deleteAccount(password) {
         let users = loadUsers();
         if(!users[currentUser]) return false;
         if(users[currentUser].senha !== password) return false;
         
+        // Registrar usuário excluído com timestamp
+        let deletedUsers = loadDeletedUsers();
+        deletedUsers[currentUser] = {
+            deletedAt: Date.now(),
+            originalName: currentUser
+        };
+        saveDeletedUsers(deletedUsers);
+        
+        // Remover usuário
         delete users[currentUser];
         saveUsers(users);
         return true;
@@ -1144,7 +1173,7 @@
         const conta = currentUser.substring(0, 8).toUpperCase().padEnd(8, 'X');
         let html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Extrato - ${currentUser}</title><style>body{font-family:'Courier New', monospace; background:white; padding:20px; color:#000;} .header-banco{text-align:center; border-bottom:2px solid #000; padding-bottom:15px;} .info-conta{display:flex; justify-content:space-between; margin:15px 0; padding:10px; background:#f5f5f5; border:1px solid #000;} .resumo-extrato{display:flex; justify-content:space-between; margin:20px 0; padding:12px; background:#e8e8e8; border:1px solid #000;} table{width:100%; border-collapse:collapse;} th, td{padding:8px; border:1px solid #ccc; text-align:left;} th{background:#000; color:white;} .valor-credito{color:#006600; font-weight:bold;} .valor-debito{color:#cc0000; font-weight:bold;} </style></head><body><div class="header-banco"><h1>💰 EXTRATO FINANCEIRO</h1><p>Movimentações - ${formatDateExtenso()}</p></div><div class="info-conta"><span>Agência: ${agencia}</span><span>Conta: ${conta}</span><span>Cliente: ${currentUser}</span><span>Extrato: ${numeroExtrato}</span></div><div class="resumo-extrato"><div><strong>Total Créditos:</strong> ${formatMoney(totalEntradas)}</div><div><strong>Total Débitos:</strong> ${formatMoney(totalSaidas)}</div><div><strong>Saldo:</strong> ${formatMoney(saldoAtual)}</div></div><table><thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Valor</th><th>Saldo</th></tr></thead><tbody>`;
         for(let t of transacoesOrdenadas) { html += `<tr><td>${formatDateBR(t.data)}</td><td>${escapeHtml(t.descricao)}</td><td>${escapeHtml(t.categoria)}</td><td class="${t.tipo === 'entrada' ? 'valor-credito' : 'valor-debito'}">${t.tipo === 'entrada' ? formatMoney(t.valor) : `- ${formatMoney(t.valor)}`}</td><td>${formatMoney(saldosMap.get(t.id) || 0)}</td></tr>`; }
-        html += `</tbody></table><footer style="margin-top:20px; text-align:center; font-size:9px;">Gerado em ${new Date().toLocaleString('pt-BR')} - ${transacoes.length} lançamentos</footer></body></html>`;
+        html += `</tbody><table><footer style="margin-top:20px; text-align:center; font-size:9px;">Gerado em ${new Date().toLocaleString('pt-BR')} - ${transacoes.length} lançamentos</footer></body></html>`;
         const div = document.createElement('div'); div.innerHTML = html; document.body.appendChild(div);
         const opt = { margin: [0.5,0.5,0.5,0.5], filename: `Extrato_${currentUser}_${new Date().toISOString().slice(0,10)}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, backgroundColor: '#ffffff' }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } };
         try { await html2pdf().set(opt).from(div).save(); alert("✅ PDF gerado!"); } catch(e) { alert("❌ Erro: " + e.message); } finally { document.body.removeChild(div); }
@@ -1174,7 +1203,7 @@
         }
         
         if(deleteAccount(password)) {
-            alert("✅ Conta excluída permanentemente! Todos os seus dados foram removidos.");
+            alert("✅ Conta excluída permanentemente! Você não poderá criar uma nova conta com o mesmo nome por 7 dias.");
             document.getElementById('deleteAccountModal').classList.remove('active');
             currentUser = null;
             document.getElementById('mainApp').style.display = 'none';
@@ -1216,7 +1245,21 @@
             applyHideValuesState();
         }catch(e){ document.getElementById('loginErrorMsg').innerText=e.message; } 
     };
-    document.getElementById('registerBtn').onclick=()=>{ let n=document.getElementById('regNome').value, p=document.getElementById('regSenha').value, c=document.getElementById('regConfirm').value; if(!n||!p) return document.getElementById('regErrorMsg').innerText="Preencha todos os campos!"; if(p!==c) return document.getElementById('regErrorMsg').innerText="Senhas diferentes!"; try{ registerUser(n,p); alert("Conta criada! Faça login."); document.getElementById('regScreen').style.display='none'; document.getElementById('loginScreen').style.display='flex'; }catch(e){ document.getElementById('regErrorMsg').innerText=e.message; } };
+    document.getElementById('registerBtn').onclick=()=>{ 
+        let n=document.getElementById('regNome').value, 
+           p=document.getElementById('regSenha').value, 
+           c=document.getElementById('regConfirm').value; 
+        if(!n||!p) return document.getElementById('regErrorMsg').innerText="Preencha todos os campos!"; 
+        if(p!==c) return document.getElementById('regErrorMsg').innerText="Senhas diferentes!"; 
+        try{ 
+            registerUser(n,p); 
+            alert("Conta criada! Faça login."); 
+            document.getElementById('regScreen').style.display='none'; 
+            document.getElementById('loginScreen').style.display='flex'; 
+        }catch(e){ 
+            document.getElementById('regErrorMsg').innerText=e.message; 
+        } 
+    };
     document.getElementById('showRegLink').onclick=()=>{ document.getElementById('loginScreen').style.display='none'; document.getElementById('regScreen').style.display='flex'; };
     document.getElementById('showLoginLink').onclick=()=>{ document.getElementById('regScreen').style.display='none'; document.getElementById('loginScreen').style.display='flex'; };
     document.getElementById('hideValuesBtn').onclick=toggleHideValues;
@@ -1244,4 +1287,4 @@
     applyHideValuesState();
 </script>
 </body>
-</html>
+                                                               </html>
