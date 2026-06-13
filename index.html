@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>Extrato Financeiro - Controle Mobile PRO</title>
-    <!-- Bibliotecas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
@@ -15,7 +14,7 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Tema claro (PADRÃO INICIAL) */
+        /* Tema claro (PADRÃO) */
         :root {
             --bg-page: #f0f2f5;
             --bg-surface: #ffffff;
@@ -37,7 +36,7 @@
             --hover-bg: #e9ecef;
         }
 
-        /* Tema escuro - ativado via classe .dark-theme no body */
+        /* Tema escuro */
         body.dark-theme {
             --bg-page: #000000;
             --bg-surface: #0a0a0a;
@@ -61,7 +60,7 @@
             transition: background-color 0.2s, color 0.2s;
         }
 
-        /* CLASSE PARA OCULTAR VALORES */
+        /* CLASSE PARA OCULTAR VALORES - ATIVADA POR PADRÃO */
         .hide-values .resumo-valor,
         .hide-values .transaction-value,
         .hide-values .cat-item span:last-child {
@@ -212,6 +211,65 @@
             background: var(--hover-bg);
         }
 
+        /* Menu de 3 pontos */
+        .menu-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .menu-btn {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            padding: 10px 14px;
+            border-radius: 30px;
+            color: var(--text-primary);
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .menu-btn:hover {
+            background: var(--hover-bg);
+        }
+        .menu-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 45px;
+            background: var(--bg-card);
+            min-width: 200px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            z-index: 100;
+            overflow: hidden;
+        }
+        .menu-content a, .menu-content button {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 14px 18px;
+            text-align: left;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .menu-content a:hover, .menu-content button:hover {
+            background: var(--hover-bg);
+        }
+        .menu-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 4px 0;
+        }
+        .show-menu {
+            display: block;
+        }
+
         .hide-toggle {
             background: var(--bg-elevated);
             border: 2px solid var(--success);
@@ -230,26 +288,6 @@
             background: var(--success);
             color: white;
             border-color: var(--success);
-        }
-
-        .theme-toggle {
-            background: var(--bg-elevated);
-            border: 2px solid var(--info);
-            border-radius: 30px;
-            padding: 8px 14px;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: var(--info);
-            transition: all 0.2s;
-        }
-        .theme-toggle:hover {
-            background: var(--info);
-            color: white;
-            border-color: var(--info);
         }
 
         .resumo-grid {
@@ -529,25 +567,6 @@
             color: var(--text-primary);
         }
 
-        .toolbar-mobile {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin: 20px 0 16px;
-        }
-        .tool-btn {
-            flex: 1;
-            background: var(--bg-elevated);
-            border: 1px solid var(--border);
-            padding: 12px;
-            border-radius: 30px;
-            font-size: 13px;
-            font-weight: 700;
-            text-align: center;
-            cursor: pointer;
-            color: var(--text-primary);
-        }
-
         .modal-mobile {
             display: none;
             position: fixed;
@@ -608,7 +627,7 @@
         }
     </style>
 </head>
-<body>
+<body class="hide-values">
 
 <!-- Tela de Login -->
 <div id="loginScreen" class="auth-screen">
@@ -643,9 +662,24 @@
         <div class="logo-area"><h1>💰 Extrato Financeiro</h1></div>
         <div class="user-actions">
             <span style="background: var(--bg-elevated); padding: 8px 16px; border-radius: 40px; font-size: 14px; border:1px solid var(--border);">👤 <span id="userNameDisplay"></span></span>
-            <button id="logoutMobileBtn" class="icon-btn">🚪 Sair</button>
             <button id="hideValuesBtn" class="hide-toggle">🔒 Ocultar</button>
-            <button id="themeToggleBtn" class="theme-toggle">🌙 Escuro</button>
+            
+            <!-- Menu de 3 pontos -->
+            <div class="menu-dropdown">
+                <button id="menuBtn" class="menu-btn">⋮</button>
+                <div id="menuContent" class="menu-content">
+                    <button id="menuBackup">💾 Backup</button>
+                    <button id="menuRestore">📥 Restaurar Backup</button>
+                    <button id="menuPdf">📄 Gerar Extrato PDF</button>
+                    <div class="menu-divider"></div>
+                    <button id="menuClearData">🗑️ Apagar Dados da Conta</button>
+                    <button id="menuClearAll">⚠️ Limpar Todas Transações</button>
+                    <div class="menu-divider"></div>
+                    <button id="menuTheme">🌓 Alternar Tema</button>
+                    <div class="menu-divider"></div>
+                    <button id="menuLogout">🚪 Sair da Conta</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -725,13 +759,6 @@
         </div>
     </div>
 
-    <!-- Barra de ações -->
-    <div class="toolbar-mobile">
-        <button id="pdfBtnMobile" class="tool-btn">📄 Extrato PDF</button>
-        <button id="backupBtnMobile" class="tool-btn">💾 Backup</button>
-        <button id="restoreBtnMobile" class="tool-btn">📥 Restaurar</button>
-        <button id="clearAllMobile" class="tool-btn">🗑️ Limpar tudo</button>
-    </div>
     <footer>✔️ Dados salvos automaticamente. | Valores ocultos por padrão 🔒</footer>
 </div>
 
@@ -760,7 +787,6 @@
 </div>
 
 <script>
-    // ==================== FUNÇÃO CONVERTER VALOR ====================
     function parseMoneyValue(inputValue) {
         if (!inputValue && inputValue !== 0) return null;
         let str = String(inputValue).trim();
@@ -789,7 +815,6 @@
     let categoriaEntradas = ["Salário", "Freela", "Vendas", "Investimentos", "Outros"];
     let categoriaSaidas = ["Alimentação", "Moradia", "Transporte", "Lazer", "Saúde", "Educação", "Outros"];
     let tipoSelecionadoMobile = 'entrada';
-    
     let chart1, chart2, chart3, chart4;
 
     function formatMoney(val) { return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 }); }
@@ -965,31 +990,13 @@
         select.innerHTML = '<option value="todas">📋 Todas as categorias</option>' + catsUnicas.map(c=>`<option value="${c}">🏷️ ${c}</option>`).join('');
     }
     
-    // Função para aplicar o estado de ocultar valores (com persistência)
-    function applyHideValuesState() {
-        const shouldHide = localStorage.getItem('hideValuesPreference') !== 'false'; // padrão true (oculto)
-        const mainApp = document.getElementById('mainApp');
-        const hideBtn = document.getElementById('hideValuesBtn');
-        
-        if(shouldHide) {
-            mainApp.classList.add('hide-values');
-            hideBtn.innerHTML = '🔒 Ocultar';
-            hideBtn.style.borderColor = 'var(--success)';
-        } else {
-            mainApp.classList.remove('hide-values');
-            hideBtn.innerHTML = '👁️ Mostrar';
-            hideBtn.style.borderColor = 'var(--warning)';
-        }
-    }
-    
     function toggleHideValues() {
         const mainApp = document.getElementById('mainApp');
         const hideBtn = document.getElementById('hideValuesBtn');
-        const isCurrentlyHidden = mainApp.classList.contains('hide-values');
-        
-        if(isCurrentlyHidden) {
+        const isHidden = mainApp.classList.contains('hide-values');
+        if(isHidden) {
             mainApp.classList.remove('hide-values');
-            hideBtn.innerHTML = '👁️ Mostrar';
+            hideBtn.innerHTML = '🔓 Mostrar';
             hideBtn.style.borderColor = 'var(--warning)';
             localStorage.setItem('hideValuesPreference', 'false');
         } else {
@@ -1000,44 +1007,122 @@
         }
     }
     
+    function applyHideValuesState() {
+        const savedPreference = localStorage.getItem('hideValuesPreference');
+        const shouldHide = savedPreference === null ? true : savedPreference === 'true';
+        const mainApp = document.getElementById('mainApp');
+        const hideBtn = document.getElementById('hideValuesBtn');
+        if(shouldHide) {
+            mainApp.classList.add('hide-values');
+            hideBtn.innerHTML = '🔒 Ocultar';
+            hideBtn.style.borderColor = 'var(--success)';
+        } else {
+            mainApp.classList.remove('hide-values');
+            hideBtn.innerHTML = '🔓 Mostrar';
+            hideBtn.style.borderColor = 'var(--warning)';
+        }
+    }
+    
     function toggleTheme() {
         const body = document.body;
-        const btn = document.getElementById('themeToggleBtn');
         if(body.classList.contains('dark-theme')) {
             body.classList.remove('dark-theme');
             localStorage.setItem('themePreference', 'light');
-            btn.innerHTML = '🌙 Escuro';
         } else {
             body.classList.add('dark-theme');
             localStorage.setItem('themePreference', 'dark');
-            btn.innerHTML = '☀️ Claro';
         }
         setTimeout(() => atualizarGraficos(), 50);
     }
     
     function loadThemePreference() {
         const savedTheme = localStorage.getItem('themePreference');
-        const btn = document.getElementById('themeToggleBtn');
         if(savedTheme === 'dark') {
             document.body.classList.add('dark-theme');
-            if(btn) btn.innerHTML = '☀️ Claro';
         } else {
             document.body.classList.remove('dark-theme');
-            if(btn) btn.innerHTML = '🌙 Escuro';
         }
     }
-
+    
+    // Apagar apenas os dados da conta atual (transações, mas mantém usuário)
+    function clearAccountData() {
+        if(confirm("⚠️ ATENÇÃO! Isso apagará TODAS as transações da sua conta. Esta ação é irreversível. Deseja continuar?")) {
+            transacoes = [];
+            refreshAll();
+            alert("✅ Todas as transações foram removidas da sua conta.");
+        }
+    }
+    
+    // Limpar tudo (todas as transações - mesmo efeito que o acima, mantido para compatibilidade)
+    function clearAllTransactions() {
+        if(confirm("⚠️ ATENÇÃO! Isso apagará TODAS as movimentações financeiras. Esta ação é irreversível. Deseja continuar?")) {
+            transacoes = [];
+            refreshAll();
+            alert("✅ Todas as movimentações foram removidas.");
+        }
+    }
+    
     function refreshAll() {
         calcularCards(); renderMovements(); atualizarGraficos(); renderResumoCat(); atualizarFiltroCategorias(); saveCurrentUser();
     }
     
-    // Backup/Restore
     function encrypt(data, pass) { let str=JSON.stringify(data); let out=''; for(let i=0;i<str.length;i++) out+=String.fromCharCode(str.charCodeAt(i)^pass.charCodeAt(i%pass.length)); return btoa(out); }
     function decrypt(enc, pass) { let str=atob(enc); let out=''; for(let i=0;i<str.length;i++) out+=String.fromCharCode(str.charCodeAt(i)^pass.charCodeAt(i%pass.length)); return JSON.parse(out); }
-    function backupAction() { let pass=document.getElementById('backupPass').value; if(!pass) return alert("Digite uma senha"); let enc=encrypt(transacoes, pass); let blob=new Blob([enc],{type:"application/octet-stream"}); let a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`backup_${currentUser}.fin`; a.click(); document.getElementById('backupModalMobile').classList.remove('active'); alert("Backup criado!"); }
-    function restoreAction() { let input=document.createElement('input'); input.type='file'; input.accept='.fin'; input.onchange=e=>{ let file=e.target.files[0]; if(!file) return; let pass=prompt("Senha do backup:"); if(!pass) return; let reader=new FileReader(); reader.onload=ev=>{ try{ let dec=decrypt(ev.target.result, pass); if(confirm(`Restaurar ${dec.length} transações?`)){ transacoes=dec; refreshAll(); alert("Restaurado!"); } }catch(e){ alert("Erro: senha incorreta"); } }; reader.readAsText(file); }; input.click(); }
-    function clearAll() { if(confirm("Apagar TODOS os dados? Irreversível!")) { transacoes=[]; refreshAll(); } }
-    function novaCategoria() { let nome=document.getElementById('newCatName').value.trim(); if(!nome) return alert("Digite o nome"); if(tipoSelecionadoMobile==='entrada') { if(categoriaEntradas.includes(nome)) alert("Já existe!"); else categoriaEntradas.push(nome); } else { if(categoriaSaidas.includes(nome)) alert("Já existe!"); else categoriaSaidas.push(nome); } atualizarSelectCategorias(); saveCurrentUser(); document.getElementById('catModal').classList.remove('active'); document.getElementById('newCatName').value=''; alert(`Categoria "${nome}" adicionada!`); }
+    
+    function backupAction() { 
+        let pass=document.getElementById('backupPass').value; 
+        if(!pass) return alert("Digite uma senha"); 
+        let enc=encrypt(transacoes, pass); 
+        let blob=new Blob([enc],{type:"application/octet-stream"}); 
+        let a=document.createElement('a'); 
+        a.href=URL.createObjectURL(blob); 
+        a.download=`backup_${currentUser}_${new Date().toISOString().slice(0,10)}.fin`; 
+        a.click(); 
+        document.getElementById('backupModalMobile').classList.remove('active'); 
+        alert("Backup criado!"); 
+    }
+    
+    function restoreAction() { 
+        let input=document.createElement('input'); 
+        input.type='file'; 
+        input.accept='.fin'; 
+        input.onchange=e=>{ 
+            let file=e.target.files[0]; 
+            if(!file) return; 
+            let pass=prompt("Senha do backup:"); 
+            if(!pass) return; 
+            let reader=new FileReader(); 
+            reader.onload=ev=>{ 
+                try{ 
+                    let dec=decrypt(ev.target.result, pass); 
+                    if(confirm(`Restaurar ${dec.length} transações? Isso substituirá os dados atuais.`)){ 
+                        transacoes=dec; 
+                        refreshAll(); 
+                        alert("Restaurado com sucesso!"); 
+                    } 
+                } catch(e){ alert("Erro: senha incorreta ou arquivo inválido"); } 
+            }; 
+            reader.readAsText(file); 
+        }; 
+        input.click(); 
+    }
+    
+    function novaCategoria() { 
+        let nome=document.getElementById('newCatName').value.trim(); 
+        if(!nome) return alert("Digite o nome"); 
+        if(tipoSelecionadoMobile==='entrada') { 
+            if(categoriaEntradas.includes(nome)) alert("Já existe!"); 
+            else categoriaEntradas.push(nome); 
+        } else { 
+            if(categoriaSaidas.includes(nome)) alert("Já existe!"); 
+            else categoriaSaidas.push(nome); 
+        } 
+        atualizarSelectCategorias(); 
+        saveCurrentUser(); 
+        document.getElementById('catModal').classList.remove('active'); 
+        document.getElementById('newCatName').value=''; 
+        alert(`Categoria "${nome}" adicionada!`); 
+    }
     
     async function gerarPDF() { 
         if(transacoes.length === 0) { alert("Nenhuma movimentação"); return; }
@@ -1060,7 +1145,35 @@
         try { await html2pdf().set(opt).from(div).save(); alert("✅ PDF gerado!"); } catch(e) { alert("❌ Erro: " + e.message); } finally { document.body.removeChild(div); }
     }
     
-    // Eventos UI
+    function logout() {
+        if(confirm("Deseja sair da sua conta?")) {
+            currentUser = null;
+            document.getElementById('mainApp').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('loginNome').value = '';
+            document.getElementById('loginSenha').value = '';
+        }
+    }
+    
+    // Eventos do menu
+    document.getElementById('menuBtn').onclick = (e) => {
+        e.stopPropagation();
+        const menu = document.getElementById('menuContent');
+        menu.classList.toggle('show-menu');
+    };
+    document.addEventListener('click', () => {
+        document.getElementById('menuContent').classList.remove('show-menu');
+    });
+    
+    document.getElementById('menuBackup').onclick = () => { document.getElementById('backupModalMobile').classList.add('active'); };
+    document.getElementById('menuRestore').onclick = restoreAction;
+    document.getElementById('menuPdf').onclick = gerarPDF;
+    document.getElementById('menuClearData').onclick = clearAccountData;
+    document.getElementById('menuClearAll').onclick = clearAllTransactions;
+    document.getElementById('menuTheme').onclick = toggleTheme;
+    document.getElementById('menuLogout').onclick = logout;
+    
+    // Eventos principais
     document.getElementById('loginBtn').onclick=()=>{ 
         try{ 
             loginUser(document.getElementById('loginNome').value, document.getElementById('loginSenha').value); 
@@ -1070,15 +1183,13 @@
             atualizarSelectCategorias(); 
             refreshAll(); 
             loadThemePreference();
-            applyHideValuesState(); // Aplica o estado salvo de ocultar valores
+            applyHideValuesState();
         }catch(e){ document.getElementById('loginErrorMsg').innerText=e.message; } 
     };
     document.getElementById('registerBtn').onclick=()=>{ let n=document.getElementById('regNome').value, p=document.getElementById('regSenha').value, c=document.getElementById('regConfirm').value; if(!n||!p) return document.getElementById('regErrorMsg').innerText="Preencha todos os campos!"; if(p!==c) return document.getElementById('regErrorMsg').innerText="Senhas diferentes!"; try{ registerUser(n,p); alert("Conta criada! Faça login."); document.getElementById('regScreen').style.display='none'; document.getElementById('loginScreen').style.display='flex'; }catch(e){ document.getElementById('regErrorMsg').innerText=e.message; } };
     document.getElementById('showRegLink').onclick=()=>{ document.getElementById('loginScreen').style.display='none'; document.getElementById('regScreen').style.display='flex'; };
     document.getElementById('showLoginLink').onclick=()=>{ document.getElementById('regScreen').style.display='none'; document.getElementById('loginScreen').style.display='flex'; };
-    document.getElementById('logoutMobileBtn').onclick=()=>{ if(confirm("Sair?")){ currentUser=null; document.getElementById('mainApp').style.display='none'; document.getElementById('loginScreen').style.display='flex'; } };
     document.getElementById('hideValuesBtn').onclick=toggleHideValues;
-    document.getElementById('themeToggleBtn').onclick=toggleTheme;
     
     document.querySelectorAll('.mobile-tab').forEach(btn=>{ btn.onclick=()=>{ document.querySelectorAll('.mobile-tab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); let tabName=btn.dataset.tab; document.querySelectorAll('.tab-pane').forEach(p=>p.style.display='none'); if(tabName==='movements') document.getElementById('tabMovements').style.display='block'; if(tabName==='add') document.getElementById('tabAdd').style.display='block'; if(tabName==='charts'){ document.getElementById('tabCharts').style.display='block'; setTimeout(atualizarGraficos, 100); } if(tabName==='cats'){ document.getElementById('tabCats').style.display='block'; renderResumoCat(); } }; });
     
@@ -1087,26 +1198,18 @@
     document.getElementById('mobileAddCatBtn').onclick=()=>{ document.getElementById('catModal').classList.add('active'); };
     document.getElementById('confirmCatBtn').onclick=novaCategoria;
     document.getElementById('cancelCatBtn').onclick=()=>{ document.getElementById('catModal').classList.remove('active'); document.getElementById('newCatName').value=''; };
-    document.getElementById('pdfBtnMobile').onclick=gerarPDF;
-    document.getElementById('backupBtnMobile').onclick=()=>{ document.getElementById('backupModalMobile').classList.add('active'); };
-    document.getElementById('confirmBackupMobile').onclick=backupAction;
-    document.getElementById('cancelBackupMobile').onclick=()=>{ document.getElementById('backupModalMobile').classList.remove('active'); document.getElementById('backupPass').value=''; };
-    document.getElementById('restoreBtnMobile').onclick=restoreAction;
-    document.getElementById('clearAllMobile').onclick=clearAll;
     document.getElementById('filtroTipoMobile').onchange=renderMovements;
     document.getElementById('filtroCatMobile').onchange=renderMovements;
     document.getElementById('saveEditBtn').onclick=saveEdit;
     document.getElementById('cancelEditBtn').onclick=()=>{ document.getElementById('editModal').classList.remove('active'); };
+    document.getElementById('confirmBackupMobile').onclick=backupAction;
+    document.getElementById('cancelBackupMobile').onclick=()=>{ document.getElementById('backupModalMobile').classList.remove('active'); document.getElementById('backupPass').value=''; };
     
     let today=new Date().toISOString().slice(0,10);
     if(document.getElementById('mobileData')) document.getElementById('mobileData').value=today;
     atualizarSelectCategorias();
     loadThemePreference();
-    // Aplica o estado de ocultar valores ao carregar a página (antes do login, mas será aplicado novamente após login)
-    // A classe hide-values já está no body por padrão, mas garantimos a consistência
-    if(document.getElementById('mainApp')) {
-        applyHideValuesState();
-    }
+    applyHideValuesState();
 </script>
 </body>
 </html>
